@@ -2,3 +2,11 @@ main{
   min-height: 80vh;
 }
 .ml-auto{margin-left:auto;}
+
+h3{
+  padding: 0.5em 0;
+}
+
+.rating span{
+  margin: 0.1em;
+}
