@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
 import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
-const CartScreen = ({ match, location, histroy }) => {
+const CartScreen = ({ match, location, history }) => {
     const productId = match.params.id;
     const qty = location.search ? Number(location.search.split('=')[1]) : 1;
     const dispatch = useDispatch();
@@ -18,10 +18,10 @@ const CartScreen = ({ match, location, histroy }) => {
 
     const removeFromCartHandler = (id) => {
         console.log(`remove item ${id}`);
-        dispatch(removeFromCart(id));
+        dispatch(removeFromCart(id, history));
     }
     const checkoutHandler = () => {
-        history.pushState('/login?redirect=shipping')
+        history.push('/login?redirect=shipping')
     }
     return (
         <Row>
@@ -29,11 +29,11 @@ const CartScreen = ({ match, location, histroy }) => {
                 <h1>Shopping Cart</h1>
                 {cartItems.length === 0 ? <Message>Your cart is empty <Link to='/'>Go Back</Link></Message> : (
                     <ListGroup variant='flush'>
-                        {cartItems.map(item => {
+                        {cartItems.map(item => (
                             <ListGroup.Item key={item.product}>
                                 <Row>
                                     <Col md={2}>
-                                        <Imgage src={item.image} alt={item.name} fluid rounded />
+                                        <Image src={item.image} alt={item.name} fluid rounded />
                                     </Col>
                                     <Col md={3}>
                                         <Link to={`/products/${item.product}`}>{item.name}</Link>
@@ -55,7 +55,7 @@ const CartScreen = ({ match, location, histroy }) => {
                                     </Col>
                                 </Row>
                             </ListGroup.Item>
-                        })}
+                        ))}
                     </ListGroup>
                 )}
             </Col>
