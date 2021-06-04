@@ -19,7 +19,7 @@ export const authUser = async (req, res, next) => {
     }
     catch (error) {
         console.error(error, 'DB Error, unable to get products');
-        res.status(500).json({ message: "Internal Server Error" });
+        next(new Error(error));
     }
 }
 
@@ -27,12 +27,12 @@ export const authUser = async (req, res, next) => {
 // @route GET /api/users/profile
 // @access Private
 export const getUserProfile = async (req, res, next) => {
-   
+
     try {
         const user = await User.findById(req.user._id);
         if (user) {
             const { _id, name, email, isAdmin } = user;
-            res.json({ _id, name, email, isAdmin});
+            res.json({ _id, name, email, isAdmin });
         }
         else {
             res.status(404);
@@ -41,6 +41,40 @@ export const getUserProfile = async (req, res, next) => {
     }
     catch (error) {
         console.error(error, 'DB Error, unable to get products');
-        res.status(500).json({ message: "Internal Server Error" });
+        next(new Error(error));
+    }
+}
+
+// @desc Register user
+// @route POST /api/users
+// @access Public
+export const registerUser = async (req, res, next) => {
+    const { name, email, password } = req.body;
+    try {
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            res.status(400);
+            next(new Error('User already exists'));
+        }
+
+        const user = await User.create({
+            name, email, password
+        });
+
+        if (user) {
+            const { _id, name, email, isAdmin } = user;
+            res.status(201).json({
+                _id, name, email, isAdmin, token: generateToken(_id)
+            })
+        }
+        else {
+            console.log('no data');
+            res.status(400);
+            next(new Error('Invalid user data'));
+        }
+    }
+    catch(error){
+        console.error(error, 'DB Error, unable to get / create user');
+        next(new Error(error));
     }
 }
