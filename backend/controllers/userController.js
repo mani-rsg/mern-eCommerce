@@ -18,7 +18,7 @@ export const authUser = async (req, res, next) => {
         }
     }
     catch (error) {
-        console.error(error, 'DB Error, unable to get products');
+        console.error(error, 'DB Error, unable to authenticate user');
         next(new Error(error));
     }
 }
@@ -40,7 +40,35 @@ export const getUserProfile = async (req, res, next) => {
         }
     }
     catch (error) {
-        console.error(error, 'DB Error, unable to get products');
+        console.error(error, 'DB Error, unable to get user profile');
+        next(new Error(error));
+    }
+}
+
+// @desc Update user profile
+// @route PUT /api/users/profile
+// @access Private
+export const updateUserProfile = async (req, res, next) => {
+
+    try {
+        const user = await User.findById(req.user._id);
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+            if (req.body.password) {
+                user.password = req.body.password;
+            }
+            const updatedUser = await user.save();
+            const { _id, name, email, isAdmin } = updatedUser;
+            res.json({ _id, name, email, isAdmin, token: generateToken(_id) });
+        }
+        else {
+            res.status(404);
+            next(new Error('User not found'));
+        }
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to update user');
         next(new Error(error));
     }
 }
@@ -73,7 +101,7 @@ export const registerUser = async (req, res, next) => {
             next(new Error('Invalid user data'));
         }
     }
-    catch(error){
+    catch (error) {
         console.error(error, 'DB Error, unable to get / create user');
         next(new Error(error));
     }

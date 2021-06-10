@@ -29,7 +29,7 @@ const LoginScreen = ({ location, history }) => {
             <h1>Sign In</h1>
             {error && <Message variant="danger">{error}</Message>}
             {loading && <Loader />}
-            <Form onSumbmit={submitHandler}>
+            <Form onSubmit={submitHandler}>
                 <Form.Group controlId='email'>
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control type='email' placeholder='Enter email' value={email} onChange={e => setEmail(e.target.value)}></Form.Control>
