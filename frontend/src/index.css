@@ -35,3 +35,7 @@ h1{
 .btn-block {
   width: 100%;
 }
+
+.form-group {
+  margin-bottom: 1rem;
+}

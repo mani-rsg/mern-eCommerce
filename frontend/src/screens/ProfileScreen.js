@@ -20,7 +20,7 @@ const ProfileScreen = ({ location, history }) => {
     const userUpdateProfile = useSelector(state => state.userUpdateProfile);
     const { success } = userUpdateProfile;
     useEffect(() => {
-        if (userInfo) {
+        if (!userInfo) {
             history.push('/login');
         }
         else {
@@ -38,7 +38,7 @@ const ProfileScreen = ({ location, history }) => {
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
         } else {
-            dispatch(updateUserProfile({id: user._id, name, email, password}))
+            dispatch(updateUserProfile({ id: user._id, name, email, password }))
         }
     }
     return (
@@ -66,9 +66,9 @@ const ProfileScreen = ({ location, history }) => {
                         <Form.Label>Confirm Password</Form.Label>
                         <Form.Control type='password' placeholder='Confirm password' value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}></Form.Control>
                     </Form.Group>
-                    <Button type='submit' variant='primary' onClick={submitHandler}>
-                        Register
-                </Button>
+                    <Button className = "my-3" type='submit' variant='primary' onClick={submitHandler}>
+                        Update
+                    </Button>
                 </Form>
             </Col>
             <Col md={9}>
