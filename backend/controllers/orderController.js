@@ -26,3 +26,23 @@ export const addOrderItems = async (req, res, next) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+// @desc Get order by Id
+// @route GET /api/orders/:id
+// @access Private
+export const getOrderById = async (req, res, next) => {
+    try {
+        const order = await Order.findById(req.params.id).populate('user', 'name email');
+        if(!order){
+            console.error('Order not found');
+            res.status(404);
+            next(new Error('Order not found'));
+            return;
+        }
+        res.json(order);
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to find order');
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
