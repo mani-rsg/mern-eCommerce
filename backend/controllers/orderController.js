@@ -33,7 +33,7 @@ export const addOrderItems = async (req, res, next) => {
 export const getOrderById = async (req, res, next) => {
     try {
         const order = await Order.findById(req.params.id).populate('user', 'name email');
-        if(!order){
+        if (!order) {
             console.error('Order not found');
             res.status(404);
             next(new Error('Order not found'));
@@ -43,6 +43,36 @@ export const getOrderById = async (req, res, next) => {
     }
     catch (error) {
         console.error(error, 'DB Error, unable to find order');
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+// @desc Update order to paid
+// @route PUT /api/orders/:id/pay
+// @access Private
+export const updateOrderToPaid = async (req, res, next) => {
+    try {
+        const order = await Order.findById(req.params.id)
+        if (!order) {
+            console.error('Order not found');
+            res.status(404);
+            next(new Error('Order not found'));
+            return;
+        }
+
+        order.isPaid = true;
+        order.paidAt = Date.now();
+        order.paymentResult = {
+            id: req.body.id,
+            status: req.body.status,
+            update_time: req.body.update_time,
+            email_address: req.body.payer.email_address
+        }
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to update order');
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
