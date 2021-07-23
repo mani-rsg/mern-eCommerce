@@ -76,3 +76,17 @@ export const updateOrderToPaid = async (req, res, next) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+// @desc Get logged in user orders
+// @route GET /api/orders/myorders
+// @access Private
+export const getMyOrders = async (req, res, next) => {
+    try {
+        const orders = await Order.find({user:req.user._id});
+        res.json(orders)
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to update order');
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}

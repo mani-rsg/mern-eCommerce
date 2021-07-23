@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import {Row, Col, ListGroup, Image, Card, ListGroupItem } from 'react-bootstrap'
+import { PayPalButton } from 'react-paypal-button-v2'
 import { useDispatch, useSelector } from 'react-redux';
 import { getOrderDetails, payOrder } from '../actions/orderActions';
 import Message from '../components/Message';
@@ -38,9 +39,9 @@ const OrderScreen = ({ match }) => {
             }
             document.body.appendChild(script);
         }
-        addPayPalScript()
-        if (!order || order._id !== orderId || successPay) {
-            dispatch({type:ORDER_PAY_RESET})
+    
+        if (!order || successPay) {
+            dispatch({ type: ORDER_PAY_RESET })
             dispatch(getOrderDetails(orderId))
         } else if (!order.isPaid) {
             if (!window.paypal) {
@@ -50,7 +51,7 @@ const OrderScreen = ({ match }) => {
                 setSdkReady(true)
             }
         }
-    }, [order, orderId, successPay])
+    }, [dispatch, order, orderId, successPay])
 
     const successPaymentHandler = (paymentResult) => {
         console.log(paymentResult)
@@ -151,7 +152,7 @@ const OrderScreen = ({ match }) => {
                                 </Row>
                             </ListGroup.Item>
                             {!order.isPaid && (<ListGroupItem>
-                                {loadingpay && <Loader />}
+                                {loadingPay && <Loader />}
                                 {!sdkReady ? <Loader /> : (
                                     <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler} />
                                 )}
