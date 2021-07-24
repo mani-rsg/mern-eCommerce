@@ -33,3 +33,24 @@ export const getProductsById = async (req, res, next) => {
     }
 }
 
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
+export const deleteProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+
+        if (product) {
+            await product.remove()
+            res.json({ message: 'Product removed' })
+        } else {
+            res.status(404)
+            next(new Error('Product not found'));
+        }
+    }
+    catch (error) {
+        console.error(error, 'DB error, unable to get product');
+        next(new Error(error));
+    }
+
+}
