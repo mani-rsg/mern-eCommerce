@@ -172,7 +172,7 @@ export const updateUser = async (req, res, next) => {
         if (user) {
             user.name = req.body.name || user.name;
             user.email = req.body.email || user.email;
-            user.isAdmin = typeof (req.body.isAdmin) !== Boolean ? false : req.body.isAdmin;
+            user.isAdmin = typeof (req.body.isAdmin) !== "boolean" ? false : req.body.isAdmin;
             const updatedUser = await user.save();
             const { _id, name, email, isAdmin } = updatedUser;
             res.json({ _id, name, email, isAdmin });
