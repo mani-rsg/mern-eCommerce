@@ -77,16 +77,56 @@ export const updateOrderToPaid = async (req, res, next) => {
     }
 }
 
+// @desc    Update order to delivered
+// @route   GET /api/orders/:id/deliver
+// @access  Private/Admin
+export const updateOrderToDelivered = async (req, res, next) => {
+    try {
+        const order = await Order.findById(req.params.id)
+
+        if (order) {
+            order.isDelivered = true
+            order.deliveredAt = Date.now()
+
+            const updatedOrder = await order.save()
+
+            res.json(updatedOrder)
+        } else {
+            res.status(404)
+            next(new Error('Order not found'))
+        }
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to update order to delivered');
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+
+}
+
 // @desc Get logged in user orders
 // @route GET /api/orders/myorders
 // @access Private
 export const getMyOrders = async (req, res, next) => {
     try {
-        const orders = await Order.find({user:req.user._id});
+        const orders = await Order.find({ user: req.user._id });
         res.json(orders)
     }
     catch (error) {
         console.error(error, 'DB Error, unable to update order');
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+// @desc    Get all orders
+// @route   GET /api/orders
+// @access  Private/Admins
+export const getOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({}).populate('user', 'id name')
+        res.json(orders)
+    }
+    catch (error) {
+        console.error(error, 'DB Error, unable to get orders');
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
