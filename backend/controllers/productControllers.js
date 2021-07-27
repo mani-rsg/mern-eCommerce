@@ -130,6 +130,7 @@ export const updateProduct = async (req, res, next) => {
         next(new Error(error));
     }
 }
+
 // @desc    Create new review
 // @route   POST /api/products/:id/reviews
 // @access  Private
@@ -176,5 +177,18 @@ export const createProductReview = async (req, res, next) => {
         console.error(error, 'DB error, unable to add review to product');
         next(new Error(error));
     }
+}
 
+// @desc    Get top rated products
+// @route   GET /api/products/top
+// @access  Public
+export const getTopProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find({}).sort({ rating: -1 }).limit(3)
+        res.json(products)
+    }
+    catch (error) {
+        console.error(error, 'DB error, unable to get top product');
+        next(new Error(error));
+    }
 }
